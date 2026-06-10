@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BDACPS 2026 — Big Data Analytics &amp; AI for Intrusion Detection in Cyber-Physical Systems</title>
+<meta name="description" content="A workshop at IEEE Big Data 2026, Phoenix, Arizona. Big data analytics, machine learning and signal processing for intrusion and anomaly detection in cyber-physical systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0A1316;
+    --bg:#0D1A1F;
+    --surface:#122428;
+    --surface-2:#193238;
+    --hair:rgba(87,224,194,0.14);
+    --hair-amber:rgba(242,178,62,0.20);
+    --text:#E8EFEC;
+    --text-dim:#8CA49E;
+    --text-faint:#5E7570;
+    --mint:#57E0C2;
+    --mint-deep:#34B79C;
+    --amber:#F2B23E;
+    --amber-deep:#E2962A;
+    --maxw:1180px;
+    --ease:cubic-bezier(.2,.7,.2,1);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg-deep);
+    color:var(--text);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* faint graticule over the whole page */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(rgba(87,224,194,0.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(87,224,194,0.035) 1px,transparent 1px);
+    background-size:46px 46px;
+    pointer-events:none;
+    z-index:0;
+    mask-image:radial-gradient(ellipse 120% 90% at 50% 0%,#000 35%,transparent 80%);
+  }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  ::selection{background:var(--amber);color:#10100A}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;position:relative;z-index:1}
+
+  .mono{font-family:"IBM Plex Mono",monospace;letter-spacing:.04em}
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--mint);
+    display:inline-flex;align-items:center;gap:.7em;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--mint);display:inline-block}
+
+  h1,h2,h3{font-family:"Space Grotesk",sans-serif;font-weight:700;line-height:1.04;letter-spacing:-.018em}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);
+    background:rgba(10,19,22,0.72);
+    border-bottom:1px solid var(--hair);
+  }
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:-.01em}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px rgba(242,178,62,.18);animation:pulse 2.6s var(--ease) infinite}
+  .brand b{color:var(--text);font-size:1.04rem}
+  .brand span{color:var(--text-faint);font-family:"IBM Plex Mono",monospace;font-size:.78rem;letter-spacing:.05em}
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a{font-size:.86rem;color:var(--text-dim);transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .btn{
+    font-family:"IBM Plex Mono",monospace;font-size:.8rem;letter-spacing:.04em;
+    padding:.62em 1.15em;border-radius:2px;border:1px solid transparent;
+    cursor:pointer;transition:transform .15s var(--ease),box-shadow .2s,background .2s;
+    display:inline-flex;align-items:center;gap:.5em;
+  }
+  .btn-primary{background:var(--amber);color:#15110A;font-weight:500;box-shadow:0 0 0 0 rgba(242,178,62,.4)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(242,178,62,.55)}
+  .btn-ghost{border-color:var(--hair);color:var(--text);background:transparent}
+  .btn-ghost:hover{border-color:var(--mint);color:var(--mint)}
+  .nav-toggle{display:none;background:none;border:1px solid var(--hair);color:var(--text);width:40px;height:36px;border-radius:3px;cursor:pointer;font-size:1.1rem}
+
+  /* ---------- HERO ---------- */
+  header{padding:74px 0 30px;position:relative}
+  .hero-grid{display:grid;gap:30px}
+  .hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .chip{
+    font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.05em;
+    padding:.45em .85em;border:1px solid var(--hair);border-radius:2px;color:var(--text-dim);
+    display:inline-flex;align-items:center;gap:.6em;
+  }
+  .chip svg{width:13px;height:13px;opacity:.85}
+  h1.title{
+    font-size:clamp(2.05rem,4.7vw,4rem);
+    margin-top:20px;max-width:20ch;
+  }
+  h1.title em{font-style:normal;color:var(--amber)}
+  .acro{
+    font-family:"IBM Plex Mono",monospace;color:var(--mint);font-size:.95rem;letter-spacing:.18em;
+    margin-top:16px;display:inline-block;
+  }
+  .tagline{
+    font-family:"Space Grotesk",sans-serif;font-weight:500;
+    font-size:clamp(1.2rem,2.1vw,1.6rem);
+    color:var(--text);line-height:1.25;letter-spacing:-.005em;
+    margin-top:22px;padding-left:44px;position:relative;max-width:34ch;
+  }
+  .tagline::before{content:"";position:absolute;left:0;top:.62em;width:30px;height:2px;background:var(--amber)}
+  .lede{
+    font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--text-dim);max-width:54ch;margin-top:18px;line-height:1.55;
+  }
+  .lede b{color:var(--text);font-weight:500}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px}
+
+  /* ---------- MONITOR (signature) ---------- */
+  .monitor{
+    margin-top:48px;
+    border:1px solid var(--hair);
+    border-radius:8px;
+    background:
+      radial-gradient(120% 140% at 50% -20%,rgba(87,224,194,.06),transparent 60%),
+      linear-gradient(180deg,var(--surface),var(--bg));
+    box-shadow:0 40px 90px -50px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.03);
+    overflow:hidden;
+  }
+  .mon-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--hair);font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.06em;color:var(--text-faint)}
+  .mon-bar .left{display:flex;align-items:center;gap:14px}
+  .mon-bar .stat{color:var(--mint)}
+  .live{display:inline-flex;align-items:center;gap:.55em;color:var(--amber)}
+  .live i{width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block;animation:pulse 1.6s var(--ease) infinite}
+  .scope{position:relative;height:clamp(180px,26vw,290px)}
+  .scope svg{position:absolute;inset:0;width:100%;height:100%}
+  .scope .label{
+    position:absolute;font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.05em;
+    color:var(--amber);border:1px solid var(--hair-amber);background:rgba(242,178,62,.07);
+    padding:.3em .6em;border-radius:2px;white-space:nowrap;
+    transform:translateX(-50%);
+  }
+  .mon-foot{display:flex;flex-wrap:wrap;gap:26px;padding:13px 18px;border-top:1px solid var(--hair);font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--text-faint)}
+  .mon-foot b{color:var(--text-dim);font-weight:500}
+  .mon-foot .ok{color:var(--mint)}
+  .mon-foot .alert{color:var(--amber)}
+
+  /* draw animation */
+  .trace{fill:none;stroke-linejoin:round;stroke-linecap:round}
+  .trace-base{stroke:var(--mint);stroke-width:1.6;filter:drop-shadow(0 0 5px rgba(87,224,194,.45))}
+  .trace-anom{stroke:var(--amber);stroke-width:2.4;filter:drop-shadow(0 0 7px rgba(242,178,62,.6))}
+  .draw{stroke-dasharray:4000;stroke-dashoffset:4000;animation:draw 2.6s var(--ease) forwards}
+  .draw.delay{animation-delay:1.5s;animation-duration:1.3s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .marker-line{stroke:var(--amber);stroke-width:1;stroke-dasharray:3 4;opacity:0;animation:fadein .6s ease 2.4s forwards}
+  .marker-dot{fill:var(--amber);opacity:0;animation:popin .5s var(--ease) 2.5s forwards}
+  @keyframes fadein{to{opacity:.6}}
+  @keyframes popin{0%{opacity:0;transform:scale(0)}100%{opacity:1;transform:scale(1)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:96px 0;position:relative}
+  .sec-head{display:flex;flex-direction:column;gap:14px;margin-bottom:46px;max-width:62ch}
+  h2{font-size:clamp(1.9rem,3.6vw,2.9rem)}
+  .sec-head p{color:var(--text-dim);font-size:1.08rem}
+  .divider{height:1px;background:linear-gradient(90deg,var(--hair),transparent);width:100%}
+
+  /* about */
+  .about-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:56px;align-items:start}
+  .about-body p{color:var(--text-dim);margin-bottom:18px;font-size:1.06rem}
+  .about-body p b{color:var(--text);font-weight:500}
+  .incidents{border-left:2px solid var(--amber);padding:6px 0 6px 22px;margin:30px 0}
+  .incidents .k{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.5rem;color:var(--text);line-height:1.3}
+  .incidents .k span{color:var(--amber)}
+  .incidents small{color:var(--text-faint);font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.04em}
+  .challenge{background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:26px}
+  .challenge h3{font-size:.78rem;font-family:"IBM Plex Mono",monospace;letter-spacing:.18em;color:var(--mint);text-transform:uppercase;margin-bottom:18px;font-weight:500}
+  .challenge ul{list-style:none}
+  .challenge li{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--hair);font-size:.95rem;color:var(--text-dim)}
+  .challenge li:last-child{border-bottom:0}
+  .challenge li i{color:var(--amber);font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:.8rem;flex-shrink:0}
+
+  /* topics */
+  .topics{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:6px;overflow:hidden}
+  .topic{background:var(--bg);padding:32px 30px;transition:background .25s var(--ease);position:relative}
+  .topic:hover{background:var(--surface)}
+  .topic .code{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--amber);letter-spacing:.1em}
+  .topic h3{font-size:1.32rem;margin:12px 0 16px}
+  .topic ul{list-style:none}
+  .topic li{position:relative;padding-left:18px;color:var(--text-dim);font-size:.94rem;margin-bottom:9px;line-height:1.45}
+  .topic li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;background:var(--mint);border-radius:1px;opacity:.7}
+
+  /* dates / timeline */
+  .dates-note{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--text-faint);margin-top:8px}
+  .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:6px;overflow:hidden;margin-top:8px}
+  .tl{background:var(--bg);padding:28px 24px;position:relative}
+  .tl .num{font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:var(--text-faint);letter-spacing:.1em}
+  .tl .date{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.55rem;margin:10px 0 6px;color:var(--text)}
+  .tl .what{color:var(--text-dim);font-size:.92rem}
+  .tl .tag{display:inline-block;margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;padding:.25em .55em;border-radius:2px}
+  .tag-tent{color:var(--amber);border:1px solid var(--hair-amber);background:rgba(242,178,62,.07)}
+  .tag-conf{color:var(--mint);border:1px solid var(--hair);background:rgba(87,224,194,.06)}
+  .tl.final{background:linear-gradient(180deg,var(--surface),var(--bg))}
+
+  /* submit */
+  .submit-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .submit-card{background:linear-gradient(160deg,var(--surface),var(--bg));border:1px solid var(--hair);border-radius:8px;padding:40px}
+  .submit-card .eyebrow{margin-bottom:18px}
+  .submit-card h2{margin-bottom:18px}
+  .submit-card p{color:var(--text-dim);margin-bottom:24px}
+  .specs{list-style:none;margin-bottom:30px}
+  .specs li{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--hair);font-size:.94rem}
+  .specs li span:first-child{color:var(--text-dim)}
+  .specs li span:last-child{font-family:"IBM Plex Mono",monospace;color:var(--text);text-align:right}
+  .format-list{list-style:none}
+  .format-list li{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--hair)}
+  .format-list li:last-child{border-bottom:0}
+  .format-list .ic{flex-shrink:0;width:36px;height:36px;border:1px solid var(--hair);border-radius:4px;display:grid;place-items:center;color:var(--mint)}
+  .format-list .ic svg{width:18px;height:18px}
+  .format-list h3{font-size:1.05rem;margin-bottom:4px}
+  .format-list p{color:var(--text-dim);font-size:.92rem;margin:0}
+
+  /* people */
+  .chairs{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .chair{background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:28px;transition:transform .2s var(--ease),border-color .25s}
+  .chair:hover{transform:translateY(-4px);border-color:var(--hair-amber)}
+  .mono-av{width:54px;height:54px;border-radius:5px;background:var(--surface-2);display:grid;place-items:center;font-family:"Space Grotesk",sans-serif;font-weight:700;color:var(--amber);font-size:1.25rem;border:1px solid var(--hair);margin-bottom:18px}
+  .chair h3{font-size:1.22rem;margin-bottom:4px}
+  .chair .role{font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:var(--mint);letter-spacing:.05em;margin-bottom:14px}
+  .chair .aff{color:var(--text-faint);font-size:.84rem;margin-bottom:14px}
+  .chair p{color:var(--text-dim);font-size:.9rem;line-height:1.55}
+
+  .pc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:6px;overflow:hidden}
+  .pc{background:var(--bg);padding:18px 22px;transition:background .2s}
+  .pc:hover{background:var(--surface)}
+  .pc .name{font-weight:500;color:var(--text);font-size:.96rem}
+  .pc .aff{color:var(--text-faint);font-size:.8rem;margin-top:3px}
+
+  /* footer */
+  footer{border-top:1px solid var(--hair);padding:60px 0 50px;background:var(--bg)}
+  .foot-grid{display:flex;justify-content:space-between;flex-wrap:wrap;gap:32px;align-items:flex-start}
+  .foot-brand b{font-family:"Space Grotesk",sans-serif;font-size:1.3rem;color:var(--text)}
+  .foot-brand p{color:var(--text-dim);max-width:38ch;margin-top:12px;font-size:.94rem}
+  .foot-col h4{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);margin-bottom:16px;font-weight:500}
+  .foot-col a{display:block;color:var(--text-dim);font-size:.92rem;margin-bottom:11px;transition:color .2s}
+  .foot-col a:hover{color:var(--mint)}
+  .foot-bottom{margin-top:50px;padding-top:26px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;color:var(--text-faint);font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.04em}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* focus */
+  a:focus-visible,.btn:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:2px}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:920px){
+    .about-grid,.submit-grid{grid-template-columns:1fr;gap:34px}
+    .chairs{grid-template-columns:1fr}
+    .pc-grid{grid-template-columns:repeat(2,1fr)}
+    .timeline{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:680px){
+    body{font-size:16px}
+    .nav-links{display:none}
+    .nav-links.open{display:flex;position:absolute;top:64px;left:0;right:0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--hair);padding:8px 0}
+    .nav-links.open a{padding:14px 28px;border-bottom:1px solid var(--hair);width:100%}
+    .nav-links.open .btn{margin:12px 28px}
+    .nav-toggle{display:block}
+    .topics,.pc-grid{grid-template-columns:1fr}
+    section{padding:68px 0}
+    .submit-card{padding:28px}
+    .mon-foot{gap:16px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto}
+    .draw{stroke-dashoffset:0}
+    .reveal{opacity:1;transform:none}
+    .marker-line{opacity:.6}.marker-dot{opacity:1}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <span class="dot"></span>
+      <b>BDACPS</b><span>2026</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#about">Scope</a>
+      <a href="#topics">Topics</a>
+      <a href="#dates">Dates</a>
+      <a href="#organizers">Organizers</a>
+      <a class="btn btn-primary" href="#submit">Submit a paper</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">≡</button>
+  </div>
+</nav>
+
+<a id="top"></a>
+<header>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow reveal">Workshop · IEEE Big Data 2026</span>
+      <h1 class="title reveal">Big Data Analytics &amp; AI for <em>Intrusion Detection</em> in Cyber-Physical Systems</h1>
+      <span class="acro reveal">BDACPS&nbsp;2026</span>
+      <p class="tagline reveal">Catching the intrusion before the damage.</p>
+      <p class="lede reveal">When an attacker reaches through a digital channel into a physical process, the <b>signal</b> shifts before anything breaks. This workshop is about detecting that shift — at the scale of real <b>cyber-physical systems</b>, with big data analytics, machine learning and signal processing.</p>
+
+      <div class="hero-badges reveal">
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg> Phoenix, Arizona · USA</span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg> Dec 14–17, 2026</span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Full-day · Onsite</span>
+      </div>
+
+      <div class="hero-cta reveal">
+        <a class="btn btn-primary" href="#submit">Submit a paper →</a>
+        <a class="btn btn-ghost" href="#topics">Read the call for papers</a>
+      </div>
+    </div>
+
+    <!-- SIGNATURE: the monitor -->
+    <div class="monitor reveal">
+      <div class="mon-bar">
+        <div class="left">
+          <span>SENSOR_STREAM · OT/ICS</span>
+          <span class="stat">ch:04</span>
+        </div>
+        <span class="live"><i></i>MONITORING</span>
+      </div>
+      <div class="scope">
+        <svg viewBox="0 0 1200 240" preserveAspectRatio="none" aria-label="Live sensor signal showing a detected anomaly">
+          <!-- graticule -->
+          <g stroke="rgba(87,224,194,0.10)" stroke-width="1">
+            <line x1="0" y1="60" x2="1200" y2="60"/>
+            <line x1="0" y1="120" x2="1200" y2="120"/>
+            <line x1="0" y1="180" x2="1200" y2="180"/>
+            <line x1="150" y1="0" x2="150" y2="240"/>
+            <line x1="300" y1="0" x2="300" y2="240"/>
+            <line x1="450" y1="0" x2="450" y2="240"/>
+            <line x1="600" y1="0" x2="600" y2="240"/>
+            <line x1="750" y1="0" x2="750" y2="240"/>
+            <line x1="900" y1="0" x2="900" y2="240"/>
+            <line x1="1050" y1="0" x2="1050" y2="240"/>
+          </g>
+          <!-- anomaly marker -->
+          <line class="marker-line" x1="660" y1="6" x2="660" y2="234"/>
+          <!-- baseline trace -->
+          <path class="trace trace-base draw" d="M0,120 L40,118 L80,122 L120,119 L160,121 L200,117 L240,123 L280,120 L320,118 L360,122 L400,119 L440,121 L480,118 L520,122 L560,120 L580,121"/>
+          <!-- anomaly burst -->
+          <path class="trace trace-anom draw delay" d="M580,121 L600,118 L615,58 L630,178 L645,30 L660,196 L675,72 L690,164 L705,96 L720,134 L735,120"/>
+          <!-- baseline resumes -->
+          <path class="trace trace-base draw delay" d="M735,120 L780,119 L820,122 L860,118 L900,121 L940,119 L980,123 L1020,120 L1060,118 L1100,122 L1140,119 L1200,121"/>
+          <circle class="marker-dot" cx="660" cy="196" r="5"/>
+        </svg>
+        <div class="label" style="left:55%;top:14px">⚠ INTRUSION · flagged</div>
+      </div>
+      <div class="mon-foot">
+        <span><b>baseline</b> <span class="ok">nominal</span></span>
+        <span><b>Δ</b> 4.2σ</span>
+        <span><b>class</b> false-data-injection</span>
+        <span><b>status</b> <span class="alert">ANOMALY</span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ABOUT / SCOPE -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">01 · Why this workshop</span>
+      <h2>Defending the systems where bits move atoms.</h2>
+      <p>Cyber-physical systems now run the grid, the water, the factory floor and the operating room. The same connectivity that makes them efficient gives adversaries a path from a network packet to a physical consequence.</p>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-body reveal">
+        <p>Conventional intrusion detection was built for IT — not for the timing constraints, proprietary protocols and safety-critical physics of operational technology. Meanwhile the data keeps growing: time-series sensor readings, industrial network traffic, operational logs and actuator states arriving in <b>volume, velocity and variety</b> that only big-data pipelines can absorb.</p>
+        <p>Deep learning has proven it can learn the behavioral fingerprints hidden in that data. <b>BDACPS 2026</b> brings together the data-engineering, signal-processing, industrial-IoT and security communities to push detection from the lab into live production environments — and to confront the hard parts head-on.</p>
+
+        <div class="incidents">
+          <div class="k"><span>Stuxnet.</span> Triton. <span>Florida, 2021.</span></div>
+          <small>Landmark attacks where the digital reached the physical — and detection arrived late.</small>
+        </div>
+
+        <p>Hosted under IEEE Big Data 2026's focus on scalable data infrastructure and intelligent analysis, this workshop extends that agenda into operational-technology security, building on the team's prior <span class="mono" style="color:var(--text)">SPID-CPS @ IEEE ICASSP 2024</span> satellite event.</p>
+      </div>
+
+      <aside class="challenge reveal">
+        <h3>The open problems</h3>
+        <ul>
+          <li><i>i</i> Scarcity of labeled attack data in the wild</li>
+          <li><i>ii</i> Real-time inference under strict latency bounds</li>
+          <li><i>iii</i> Domain shift from benchmarks to live plants</li>
+          <li><i>iv</i> Explainability &amp; auditability for regulated, safety-critical systems</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- TOPICS -->
+<section id="topics">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">02 · Call for papers</span>
+      <h2>Topics of interest.</h2>
+      <p>We welcome original work — theoretical foundations and applied systems alike — across six tracks. The list is indicative, not exhaustive.</p>
+    </div>
+
+    <div class="topics">
+      <div class="topic reveal">
+        <span class="code">A — Architectures</span>
+        <h3>Big data architectures for CPS security</h3>
+        <ul>
+          <li>Scalable ingestion &amp; preprocessing for heterogeneous sensor streams</li>
+          <li>Real-time stream processing (Kafka, Flink, Spark Streaming)</li>
+          <li>Time-series &amp; data-lake stores tuned for OT/ICS analytics</li>
+          <li>Edge–cloud continuum and fog approaches to distributed detection</li>
+        </ul>
+      </div>
+      <div class="topic reveal">
+        <span class="code">B — Learning</span>
+        <h3>Machine &amp; deep learning for detection</h3>
+        <ul>
+          <li>Supervised, semi- and unsupervised methods for CPS anomalies</li>
+          <li>RNNs, CNNs and transformers for time-series security analysis</li>
+          <li>Graph neural networks for topology-aware anomaly detection</li>
+          <li>Generative models (GANs, VAEs, diffusion) for attack augmentation</li>
+          <li>Federated &amp; privacy-preserving learning across industrial sites</li>
+        </ul>
+      </div>
+      <div class="topic reveal">
+        <span class="code">C — Signals</span>
+        <h3>Signal processing techniques</h3>
+        <ul>
+          <li>Frequency &amp; time-frequency analysis (FFT, wavelets, EMD)</li>
+          <li>Change-point detection for attack-onset identification</li>
+          <li>Sensor fusion &amp; multi-modal integration for robust monitoring</li>
+          <li>Physics-informed methods separating process drift from tampering</li>
+        </ul>
+      </div>
+      <div class="topic reveal">
+        <span class="code">D — Trust</span>
+        <h3>Explainability, robustness &amp; trust</h3>
+        <ul>
+          <li>XAI for transparent decisions in safety-critical contexts</li>
+          <li>Adversarial robustness against evasion and poisoning</li>
+          <li>Uncertainty quantification &amp; confidence calibration</li>
+          <li>Certification, verification and audit for regulated CPS</li>
+        </ul>
+      </div>
+      <div class="topic reveal">
+        <span class="code">E — Benchmarks</span>
+        <h3>Datasets, benchmarks &amp; evaluation</h3>
+        <ul>
+          <li>New CPS security datasets (SWaT, BATADAL, HAI, iTrust…)</li>
+          <li>Evaluation metrics tailored to CPS detection performance</li>
+          <li>Digital twins &amp; simulation for realistic attack scenarios</li>
+          <li>Anonymization &amp; synthetic data preserving statistical fidelity</li>
+        </ul>
+      </div>
+      <div class="topic reveal">
+        <span class="code">F — Threats</span>
+        <h3>Emerging threats &amp; attack vectors</h3>
+        <ul>
+          <li>Stealthy multi-stage attacks (APTs, false data injection, replay)</li>
+          <li>IIoT, smart grids, autonomous vehicles and smart cities</li>
+          <li>5G-enabled CPS and time-sensitive networking (TSN)</li>
+          <li>Cross-domain threat intelligence &amp; collaborative defense</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- DATES -->
+<section id="dates">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">03 · Important dates</span>
+      <h2>Key deadlines.</h2>
+      <p class="dates-note">All deadlines are 23:59 AoE. Workshop deadlines are tentative and will be aligned with the IEEE Big Data 2026 workshop schedule.</p>
+    </div>
+
+    <div class="timeline reveal">
+      <div class="tl">
+        <span class="num">01 / SUBMIT</span>
+        <div class="date">Oct 30, 2026</div>
+        <div class="what">Paper submission deadline</div>
+        <span class="tag tag-tent">tentative</span>
+      </div>
+      <div class="tl">
+        <span class="num">02 / DECIDE</span>
+        <div class="date">Nov 13, 2026</div>
+        <div class="what">Notification of acceptance</div>
+        <span class="tag tag-tent">tentative</span>
+      </div>
+      <div class="tl">
+        <span class="num">03 / FINALIZE</span>
+        <div class="date">Dec 1, 2026</div>
+        <div class="what">Camera-ready &amp; registration</div>
+        <span class="tag tag-tent">tentative</span>
+      </div>
+      <div class="tl final">
+        <span class="num">04 / MEET</span>
+        <div class="date">Dec 14–17</div>
+        <div class="what">IEEE Big Data 2026 · Phoenix, AZ</div>
+        <span class="tag tag-conf">confirmed</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- SUBMIT -->
+<section id="submit">
+  <div class="wrap submit-grid">
+    <div class="submit-card reveal">
+      <span class="eyebrow">04 · Submission</span>
+      <h2>Send us your work.</h2>
+      <p>Papers are peer-reviewed and accepted contributions appear in the IEEE Big Data 2026 proceedings, indexed in IEEE Xplore.</p>
+      <ul class="specs">
+        <li><span>Format</span><span>IEEE 2-column</span></li>
+        <li><span>Length</span><span>up to 10 pages</span></li>
+        <li><span>Review</span><span>double-checked, single track</span></li>
+        <li><span>Submission</span><span>IEEE BigData system</span></li>
+        <li><span>Proceedings</span><span>IEEE Xplore</span></li>
+      </ul>
+      <a class="btn btn-primary" href="https://wi-lab.com/cyberchair/2026/bigdata26/" target="_blank" rel="noopener">Open the submission system →</a>
+    </div>
+
+    <div class="reveal">
+      <ul class="format-list">
+        <li>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 12h16M4 19h10"/></svg></span>
+          <div><h3>Oral presentations</h3><p>15–20 minutes including Q&amp;A, in a single full-day track.</p></div>
+        </li>
+        <li>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2zM9 21h6"/></svg></span>
+          <div><h3>Invited keynotes</h3><p>Distinguished voices from academia and industry on CPS security at scale.</p></div>
+        </li>
+        <li>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M14 20a5 5 0 0 1 7 0"/></svg></span>
+          <div><h3>Open-challenges panel</h3><p>A moderated discussion on the unsolved problems in big-data-driven CPS defense.</p></div>
+        </li>
+        <li>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></span>
+          <div><h3>Posters &amp; demos</h3><p>An interactive showcase and networking session, subject to submission volume.</p></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- ORGANIZERS -->
+<section id="organizers">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">05 · Organization</span>
+      <h2>Program chairs.</h2>
+    </div>
+
+    <div class="chairs">
+      <div class="chair reveal">
+        <div class="mono-av">AG</div>
+        <h3>Antonio Galli</h3>
+        <div class="role">Program Chair</div>
+        <div class="aff">University of Naples Federico II · Dept. of Electrical Engineering &amp; IT</div>
+        <p>Assistant Professor working on deep learning and big data analytics, with a focus on AI for Industry 4.0. PhD in Technology, Innovation &amp; Management; co-organizer of SPID-CPS @ IEEE ICASSP 2024.</p>
+      </div>
+      <div class="chair reveal">
+        <div class="mono-av">AF</div>
+        <h3>Antonino Ferraro</h3>
+        <div class="role">Program Chair · Member, IEEE</div>
+        <div class="aff">Pegaso University · Dept. of Information Science &amp; Technology</div>
+        <p>Tenure-track Assistant Professor in time-series forecasting, data-driven AI and explainable AI applied to CPS and healthcare. TPC member for IJCAI 2026 and guest editor for several international journals.</p>
+      </div>
+      <div class="chair reveal">
+        <div class="mono-av">VM</div>
+        <h3>Vincenzo Moscato</h3>
+        <div class="role">Program Chair</div>
+        <div class="aff">University of Naples Federico II · Dept. of Electrical Engineering &amp; IT</div>
+        <p>Full Professor of Database and Information Systems, author of 100+ journal and conference publications. Research spans multimedia, knowledge management and big data analytics.</p>
+      </div>
+    </div>
+
+    <div class="sec-head reveal" style="margin-top:72px;margin-bottom:30px">
+      <span class="eyebrow">Program committee</span>
+    </div>
+    <div class="pc-grid reveal">
+      <div class="pc"><div class="name">Michela Gravina</div><div class="aff">Univ. of Naples Federico II, IT</div></div>
+      <div class="pc"><div class="name">Gian Marco Orlando</div><div class="aff">Univ. of Naples Federico II, IT</div></div>
+      <div class="pc"><div class="name">Diego Russo</div><div class="aff">Univ. of Bergamo, IT</div></div>
+      <div class="pc"><div class="name">Flora Amato</div><div class="aff">Univ. of Naples Federico II, IT</div></div>
+      <div class="pc"><div class="name">Giancarlo Sperlì</div><div class="aff">Univ. of Naples Federico II, IT</div></div>
+      <div class="pc"><div class="name">Andrea Vignali</div><div class="aff">Univ. of Naples Federico II, IT</div></div>
+      <div class="pc"><div class="name">Martina Iammarino</div><div class="aff">Pegaso University, IT</div></div>
+      <div class="pc"><div class="name">Fabiano Pecorelli</div><div class="aff">Pegaso University, IT</div></div>
+      <div class="pc"><div class="name">Marco Postiglione</div><div class="aff">Northwestern University, USA</div></div>
+      <div class="pc"><div class="name">Valerio La Gatta</div><div class="aff">Northwestern University, USA</div></div>
+      <div class="pc"><div class="name">Angelo Lorusso</div><div class="aff">Pegaso University, IT</div></div>
+      <div class="pc"><div class="name">Lorenzo Malandri</div><div class="aff">Univ. of Milano-Bicocca, IT</div></div>
+      <div class="pc"><div class="name">Mouzhi Ge</div><div class="aff">Deggendorf Inst. of Technology, DE</div></div>
+      <div class="pc"><div class="name">Massimiliano Albanese</div><div class="aff">George Mason University, USA</div></div>
+      <div class="pc"><div class="name">Fabio Persia</div><div class="aff">Univ. of L'Aquila, IT</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <b>BDACPS 2026</b>
+        <p>Big Data Analytics &amp; AI for Intrusion Detection in Cyber-Physical Systems — a workshop at the IEEE International Conference on Big Data 2026.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Workshop</h4>
+        <a href="#about">Scope</a>
+        <a href="#topics">Call for papers</a>
+        <a href="#dates">Important dates</a>
+        <a href="#submit">Submit</a>
+      </div>
+      <div class="foot-col">
+        <h4>Links</h4>
+        <a href="https://bigdataieee.org/BigData2026/" target="_blank" rel="noopener">IEEE Big Data 2026 ↗</a>
+        <a href="https://bigdataieee.org/BigData2026/important-dates/" target="_blank" rel="noopener">Conference dates ↗</a>
+        <a href="mailto:antonio.galli@unina.it">Contact organizers</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Dec 14–17, 2026 · Sheraton Phoenix Downtown · Phoenix, AZ, USA</span>
+      <span>antonio.galli@unina.it</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // mobile nav
+  const toggle=document.getElementById('navToggle');
+  const links=document.getElementById('navLinks');
+  toggle.addEventListener('click',()=>links.classList.toggle('open'));
+  links.addEventListener('click',e=>{if(e.target.tagName==='A')links.classList.remove('open');});
+
+  // scroll reveal
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{
+    el.style.transitionDelay=(Math.min(i,6)*0.05)+'s';
+    io.observe(el);
+  });
+</script>
+</body>
+</html>
